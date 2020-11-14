@@ -11,10 +11,11 @@
         <button @click.prevent="fetchWeather" class="btn-search">search</button>
       </div>
 
-      <div id="location">Chicago, IL</div>
-      <div id="date">Friday, November 13, 2020</div>
-      <div id="temp">40 degrees F</div>
-      <div id="weather">Light Rain</div>
+      <div class="weather-wrap" v-if="typeof weather.main !='undefined'">
+        <div id="location">{{ weather.name }}, {{ weather.sys.country }}</div>
+        <div id="temp">{{ weatherTemp }} &#176;F</div>
+        <div id="description">{{ weather.weather[0].description }}</div>
+      </div>
     </main>
   </div>
 </template>
@@ -32,14 +33,28 @@ export default {
   },
   methods: {
     fetchWeather() {
-      fetch(`${this.url_base}/weather?q=${this.query}&appid=${this.api_key}`)
-        .then(res => res.json())
-        .then(data => {
-          console.log(data);
-          this.weather = data;
-        });
+      fetch(
+        `${this.url_base}/weather?q=${this.query}&units=imperial&appid=${this.api_key}`
+      )
+        .then((res) => {
+          return res.json();
+        })
+        .then(this.setResults);
+    },
+
+    setResults(results) {
+      this.weather = results;
+      console.log(this.weather)
     },
   },
+  computed: {
+    weatherTemp() {
+      if (this.weather.main.temp) {
+        return this.weather.main.temp.toFixed(1);
+      } 
+      return "";
+    }
+  }
 };
 </script>
 
