@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <main>
+    <div id="container">
       <div class="search-box">
         <input
           v-model="query"
@@ -11,12 +11,12 @@
         <button @click.prevent="fetchWeather" class="btn-search">search</button>
       </div>
 
-      <div class="weather-wrap" v-if="typeof weather.main !='undefined'">
+      <div class="weather-wrap" v-if="typeof weather.main != 'undefined'">
         <div id="location">{{ weather.name }}, {{ weather.sys.country }}</div>
         <div id="temp">{{ weatherTemp }} &#176;F</div>
         <div id="description">{{ weather.weather[0].description }}</div>
       </div>
-    </main>
+    </div>
   </div>
 </template>
 
@@ -44,59 +44,23 @@ export default {
 
     setResults(results) {
       this.weather = results;
-      console.log(this.weather)
+      console.log(this.weather);
     },
   },
   computed: {
     weatherTemp() {
       if (this.weather.main.temp) {
         return this.weather.main.temp.toFixed(1);
-      } 
+      }
       return "";
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: 0;
-}
-
-.search-box,
-.search-bar {
-  display: inline;
-  width: 90%;
-  padding: 15px;
-  color: #313131;
-  font-size: 20px;
-  background-color: rgba(255, 255, 255, 0.5);
-}
-
-.btn-search {
-  display: inline;
-  font-size: 20px;
-}
-
-.search-box {
-  width: 100%;
-  margin-bottom: 30px;
-}
-
-body {
-  font-family: "montserrat", sans-serif;
-}
-
 #app {
-  background-size: cover;
-  background-position: bottom;
-  transition: 0.4s;
-}
-
-main {
-  min-height: 100vh;
-  padding: 25px;
+  display: flex;
+  justify-content: center;
 }
 </style>
