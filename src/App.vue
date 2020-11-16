@@ -15,6 +15,7 @@
         <div id="location">{{ weather.name }}, {{ weather.sys.country }}</div>
         <div id="temp">{{ weatherTemp }} &#176;F</div>
         <div id="description">{{ weather.weather[0].description }}</div>
+        <img :src="weatherIcon" :alt="`weather icon for ${weather.weather[0].description}`"/>
       </div>
     </div>
   </div>
@@ -50,10 +51,13 @@ export default {
   computed: {
     weatherTemp() {
       if (this.weather.main.temp) {
-        return this.weather.main.temp.toFixed(1);
+        return this.weather.main.temp.toFixed();
       }
       return "";
     },
+    weatherIcon() {
+     return `http://openweathermap.org/img/wn/${this.weather.weather[0].icon}@2x.png`
+    }
   },
 };
 </script>
@@ -62,5 +66,6 @@ export default {
 #app {
   display: flex;
   justify-content: center;
+  align-content: center;
 }
 </style>
