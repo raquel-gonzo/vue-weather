@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div id="container">
+    <!-- <div id="container"> -->
       <div class="search-box">
         <input
           v-model="query"
@@ -8,7 +8,7 @@
           class="search-bar"
           placeholder="Search ..."
         />
-        <button @click.prevent="fetchWeather" class="btn-search">search</button>
+        <button :disabled="searchButtonDisabled" @click.prevent="fetchWeather" class="rainbow-button">search</button>
       </div>
 
       <div class="weather-wrap" v-if="typeof weather.main != 'undefined'">
@@ -17,7 +17,7 @@
         <div id="description">{{ weather.weather[0].description }}</div>
         <img :src="weatherIcon" :alt="`weather icon for ${weather.weather[0].description}`"/>
       </div>
-    </div>
+    <!-- </div> -->
   </div>
 </template>
 
@@ -57,6 +57,9 @@ export default {
     },
     weatherIcon() {
      return `http://openweathermap.org/img/wn/${this.weather.weather[0].icon}@2x.png`
+    },
+    searchButtonDisabled() {
+      return this.query === "";
     }
   },
 };
@@ -68,4 +71,42 @@ export default {
   justify-content: center;
   align-content: center;
 }
+
+body {
+  background-image: radial-gradient(circle, #6666b6, #736fbe, #7f78c6, #8c81ce, #988bd6, #9488d1, #9184cc, #8d81c7, #7a71b3, #6761a0, #54518d, #42427b);
+  height: 100vh;
+}
+
+.search-box{
+  padding: 8%;
+}
+
+button {
+  border-radius: 5px;
+  border-style: none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-transform:uppercase;
+  width: 125px;
+  color: white;
+  background-color: #302244;
+  cursor: pointer;
+  transition: border 0.3s;
+  padding: 2px;
+}
+
+button:hover:enabled {
+  border: 4px solid transparent;
+  border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
+  border-image-slice: 1;
+  transition: border 0.3s;
+  padding: 2px;
+}
+
+.rainbow-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 </style>
