@@ -1,6 +1,10 @@
 <template>
   <div id="app">
-    <div class="search-box">
+    <div class="app-title fade-in">
+      <h1>☀️🌈 wonderful weather ☀️🌈</h1>
+    </div>
+
+    <div class="search-box fade-in">
       <input
         v-model="query"
         type="text"
@@ -26,8 +30,9 @@
       />
     </div>
 
-    <div v-if="errorFound" class="weather-wrap">check spelling</div>
-
+    <div v-if="errorFound" class="weather-wrap fade-in">
+      Whoops... I couldn't find that place. Try checking your spelling.
+    </div>
   </div>
 </template>
 
@@ -42,22 +47,24 @@ export default {
       url_base: "https://api.openweathermap.org/data/2.5",
       query: "",
       weather: {},
-      errorFound: false
+      errorFound: false,
     };
   },
   methods: {
     fetchWeather() {
-      axios.get(`${this.url_base}/weather?q=${this.query}&units=imperial&appid=${this.api_key}`)
-        .then(res => {
+      axios
+        .get(
+          `${this.url_base}/weather?q=${this.query}&units=imperial&appid=${this.api_key}`
+        )
+        .then((res) => {
           this.errorFound = false;
           this.setResults(res.data);
           return res.data;
         })
-        .catch(error => {
-          this.errorFound  = true;
+        .catch((error) => {
+          this.errorFound = true;
           console.error(error);
-        })
-
+        });
     },
 
     setResults(result) {
@@ -87,7 +94,7 @@ export default {
 #app {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: center;
   align-content: center;
   font-family: "Fira Code", monospace;
 }
@@ -105,12 +112,16 @@ input {
 }
 
 .search-box {
-  padding: 8%;
+  padding: 2%;
   width: 80%;
   display: flex;
   justify-content: center;
   flex-direction: row;
   height: 50px;
+}
+
+h1 {
+  color: lavender;
 }
 
 .weather-wrap {
