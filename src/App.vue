@@ -52,9 +52,19 @@ export default {
   },
   methods: {
     fetchWeather() {
+      let isnum = /^\d{5}$/.test(this.query); // regexp for finding a 5-digit zip code
+      let queryKind;
+      if (isnum) {  
+        // if the user is searching for a US zip code
+        queryKind = `${this.url_base}/weather?zip=${this.query},us&units=imperial&appid=${this.api_key}`;
+      }
+      else {
+        // else the user is searching by city name
+        queryKind = `${this.url_base}/weather?q=${this.query}&units=imperial&appid=${this.api_key}`;
+      }
       axios
         .get(
-          `${this.url_base}/weather?q=${this.query}&units=imperial&appid=${this.api_key}`
+          queryKind
         )
         .then((res) => {
           this.errorFound = false;
