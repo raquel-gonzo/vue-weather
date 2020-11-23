@@ -11,6 +11,18 @@
         class="search-bar"
         placeholder="Search ..."
       />
+
+      <!-- todo: 
+      - conditionally render two input fields for city and state respectively. 
+      - have default search be city and state.
+      - render a different input field (one) for zip -->
+
+      <select v-model="selectData">
+        <option disabled value="">Search by</option>
+        <option>City, State</option>
+        <option>US zip code</option>
+      </select>
+
       <button
         :disabled="searchButtonDisabled"
         @click.prevent="fetchWeather"
@@ -30,6 +42,9 @@
       />
     </div>
 
+    <!-- v-model input examples -->
+    <!-- <input type="text" v-model="inputData" /> -->
+
     <div v-if="errorFound" class="weather-wrap fade-in">
       Whoops... I couldn't find that place. Try checking your spelling.
     </div>
@@ -48,24 +63,23 @@ export default {
       query: "",
       weather: {},
       errorFound: false,
+      // inputData: "",
+      selectData: "",
     };
   },
   methods: {
     fetchWeather() {
       let isnum = /^\d{5}$/.test(this.query); // regexp for finding a 5-digit zip code
       let queryKind;
-      if (isnum) {  
+      if (isnum) {
         // if the user is searching for a US zip code
         queryKind = `${this.url_base}/weather?zip=${this.query},us&units=imperial&appid=${this.api_key}`;
-      }
-      else {
+      } else {
         // else the user is searching by city name
         queryKind = `${this.url_base}/weather?q=${this.query}&units=imperial&appid=${this.api_key}`;
       }
       axios
-        .get(
-          queryKind
-        )
+        .get(queryKind)
         .then((res) => {
           this.errorFound = false;
           this.setResults(res.data);
@@ -106,6 +120,10 @@ export default {
   flex-direction: column;
   align-items: center;
   align-content: center;
+  font-family: "Fira Code", monospace;
+}
+
+select {
   font-family: "Fira Code", monospace;
 }
 
