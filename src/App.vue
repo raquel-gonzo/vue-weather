@@ -31,7 +31,8 @@
 
       <!-- todo: 
       - have default search be city and state.
-      - add breakpoint responsive styling-->
+      - add breakpoint responsive styling 
+      - if searching by zip, only allow numbers -->
 
       <select v-model="selectData">
         <option disabled value="">Search by</option>
