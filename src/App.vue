@@ -5,22 +5,38 @@
     </div>
 
     <div class="search-box fade-in">
-      <input
-        v-model="query"
-        type="text"
-        class="search-bar"
-        placeholder="Search ..."
-      />
+      <span class="search-box fade-in" v-if="selectData === 'City, State'">
+        <input
+          v-model="queryCity"
+          type="text"
+          class="search-box"
+          placeholder="City"
+        />
+        <input
+          v-model="queryState"
+          type="text"
+          class="search-box"
+          placeholder="State"
+        />
+      </span>
+
+      <span class="search-box" v-else-if="selectData === 'US zip Code'">
+        <input
+          v-model="queryZip"
+          type="text"
+          class="search-box"
+          placeholder="Zip Code"
+        />
+      </span>
 
       <!-- todo: 
-      - conditionally render two input fields for city and state respectively. 
       - have default search be city and state.
-      - render a different input field (one) for zip -->
+      - add breakpoint responsive styling-->
 
       <select v-model="selectData">
         <option disabled value="">Search by</option>
-        <option>City, State</option>
-        <option>US zip code</option>
+        <option value="City, State">City, State</option>
+        <option value="US zip Code">US zip code</option>
       </select>
 
       <button
@@ -70,11 +86,13 @@ export default {
     return {
       api_key: process.env.VUE_APP_API_KEY,
       url_base: "https://api.openweathermap.org/data/2.5",
-      query: "",
+      queryCity: "",
+      queryState: "",
+      queryZip: "",
+      selectData: "",
       weather: {},
       errorFound: false,
       isMetric: false,
-      selectData: "",
     };
   },
   methods: {
@@ -86,7 +104,7 @@ export default {
         queryKind = `${this.url_base}/weather?zip=${this.query},us&units=imperial&appid=${this.api_key}`;
       } else {
         // else the user is searching by city name
-        queryKind = `${this.url_base}/weather?q=${this.query}&units=imperial&appid=${this.api_key}`;
+        queryKind = `${this.url_base}/weather?q=${this.queryCity},${this.queryState}&units=imperial&appid=${this.api_key}`;
       }
       axios
         .get(queryKind)
@@ -120,7 +138,11 @@ export default {
       return `http://openweathermap.org/img/wn/${this.weather.weather[0].icon}@2x.png`;
     },
     searchButtonDisabled() {
-      return this.query === "";
+      return (
+        this.queryCity === "" ||
+        this.queryState === "" ||
+        this.selectData === ""
+      ); // if it's an empty string, it's disabled
     },
   },
 };
@@ -138,6 +160,7 @@ export default {
 
 select {
   font-family: "Fira Code", monospace;
+  height: 50px;
 }
 
 body {
@@ -146,19 +169,18 @@ body {
 }
 
 input {
-  width: 60%;
+  width: 40%;
   font-size: medium;
   font-family: "Fira Code", monospace;
-  padding-left: 16px;
+  margin-right: 10px;
 }
 
 .search-box {
-  padding: 2%;
+  /* padding: 2%; */
   width: 80%;
   display: flex;
   justify-content: center;
   flex-direction: row;
-  height: 50px;
 }
 
 h1 {
@@ -167,8 +189,9 @@ h1 {
 
 .weather-wrap {
   background-color: lavender;
-  width: 80%;
+  width: 75%;
   margin: 0px auto;
+  margin-top: 15px;
   text-align: center;
   border: 4px solid transparent;
   border-image: linear-gradient(
