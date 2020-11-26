@@ -109,8 +109,6 @@ export default {
       let queryKind;
       if (this.selectData === "US zip Code" && this.queryZip !== "") {
         // if the user is searching for a US zip code
-
-        // https://api.openweathermap.org/data/2.5/weather?zip=undefined,us&units=imperial&appid=b133eec881f01e1ca2a36fbd6ffba1cd
         queryKind = `${this.url_base}/weather?zip=${this.queryZip},us&units=imperial&appid=${this.api_key}`;
         console.log(queryKind);
       } else if (
