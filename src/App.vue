@@ -4,27 +4,27 @@
       <h1>☀️🌈 wonderful weather ☀️🌈</h1>
     </div>
 
-    <div class="search-box fade-in">
-      <span class="search-box fade-in" v-if="selectData === 'City, State'">
+    <div class="search-input">
+      <span class="cs-parent" v-if="selectData === 'City, State'">
         <input
+          class="cs-style fade-in"
           v-model="queryCity"
           type="text"
-          class="search-box"
           placeholder="City"
         />
         <input
+          class="cs-style fade-in"
           v-model="queryState"
           type="text"
-          class="search-box"
           placeholder="State"
         />
       </span>
 
-      <span class="search-box" v-else-if="selectData === 'US zip Code'">
+      <span v-else-if="selectData === 'US zip Code'">
         <input
+          class="cs-style fade-in"
           v-model="queryZip"
-          type="text"
-          class="search-box"
+          type="number"
           placeholder="Zip Code"
         />
       </span>
@@ -32,9 +32,9 @@
       <!-- todo: 
       - have default search be city and state.
       - add breakpoint responsive styling 
-      - if searching by zip, only allow numbers -->
+      -->
 
-      <select v-model="selectData">
+      <select v-model="selectData" class="select-style fade-in">
         <option disabled value="">Search by</option>
         <option value="City, State">City, State</option>
         <option value="US zip Code">US zip code</option>
@@ -43,7 +43,7 @@
       <button
         :disabled="searchButtonDisabled"
         @click.prevent="fetchWeather"
-        class="rainbow-button"
+        class="rainbow-button fade-in"
       >
         search
       </button>
@@ -54,23 +54,30 @@
         <h2>{{ weather.name }}, {{ weather.sys.country }}</h2>
       </div>
       <div id="temp">
-        {{ weatherTemp }}
-        <span v-if="isMetric">&#176;C</span>
-        <span v-else>&#176;F</span>
+        <h3>
+          {{ weatherTemp }}
+          <span v-if="isMetric">&#176;C</span>
+          <span v-else>&#176;F</span>
+        </h3>
       </div>
-      <div id="description">{{ weather.weather[0].description }}</div>
-      <img
-        :src="weatherIcon"
-        :alt="`weather icon for ${weather.weather[0].description}`"
-      />
-      <label class="switch">
-        <input v-model="isMetric" type="checkbox" />
-        <span class="slider round"></span>
-      </label>
-    </div>
 
-    <!-- v-model input examples -->
-    <!-- <input type="text" v-model="inputData" /> -->
+      <div id="description">{{ weather.weather[0].description }}</div>
+
+      <div>
+        <img
+          :src="weatherIcon"
+          :alt="`weather icon for ${weather.weather[0].description}`"
+        />
+      </div>
+
+      <div class="unit-switch">
+        <label class="switch">
+          <input v-model="isMetric" type="checkbox" />
+          <span class="slider round"></span>
+        </label>
+        <p>Change units</p>
+      </div>
+    </div>
 
     <div v-if="errorFound" class="weather-wrap fade-in">
       Whoops... I couldn't find that place. Try checking your spelling.
@@ -98,12 +105,19 @@ export default {
   },
   methods: {
     fetchWeather() {
-      let isnum = /^\d{5}$/.test(this.query); // regexp for finding a 5-digit zip code
+      // let isnum = /^\d{5}$/.test(this.query); // regexp for finding a 5-digit zip code
       let queryKind;
-      if (isnum) {
+      if (this.selectData === "US zip Code" && this.queryZip !== "") {
         // if the user is searching for a US zip code
-        queryKind = `${this.url_base}/weather?zip=${this.query},us&units=imperial&appid=${this.api_key}`;
-      } else {
+
+        // https://api.openweathermap.org/data/2.5/weather?zip=undefined,us&units=imperial&appid=b133eec881f01e1ca2a36fbd6ffba1cd
+        queryKind = `${this.url_base}/weather?zip=${this.queryZip},us&units=imperial&appid=${this.api_key}`;
+        console.log(queryKind);
+      } else if (
+        this.selectData === "City, State" &&
+        this.queryCity !== "" &&
+        this.queryState !== ""
+      ) {
         // else the user is searching by city name
         queryKind = `${this.url_base}/weather?q=${this.queryCity},${this.queryState}&units=imperial&appid=${this.api_key}`;
       }
@@ -139,11 +153,19 @@ export default {
       return `http://openweathermap.org/img/wn/${this.weather.weather[0].icon}@2x.png`;
     },
     searchButtonDisabled() {
-      return (
-        this.queryCity === "" ||
-        this.queryState === "" ||
-        this.selectData === ""
-      ); // if it's an empty string, it's disabled
+      if (this.selectData === "") {
+        return true;
+      }
+      if (this.selectData === "US zip Code" && this.queryZip === "") {
+        return true;
+      }
+      if (
+        this.selectData === "City, State" &&
+        (this.queryCity === "" || this.queryState === "")
+      ) {
+        return true;
+      }
+      return false;
     },
   },
 };
@@ -159,29 +181,48 @@ export default {
   font-family: "Fira Code", monospace;
 }
 
-select {
-  font-family: "Fira Code", monospace;
+.search-input {
+  display: flex;
+  flex-direction: row;
+}
+
+.cs-parent {
+  display: flex;
+  flex-direction: row;
+}
+
+.unit-switch {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: x-small;
+}
+
+.select-style {
+  width: 125px;
   height: 50px;
+  font-family: "Fira Code", monospace;
+  border-radius: 5px;
+  margin-right: 10px;
+  text-align: center;
+}
+
+.cs-style {
+  text-align: center;
+  border-radius: 5px;
+  padding: 0;
+  padding-left: 4px;
+  margin-right: 10px;
+  border-width: 1px;
+  width: 200px;
+  height: 50px;
+  font-family: "Fira Code", monospace;
 }
 
 body {
   background-color: black;
   height: 100vh;
-}
-
-input {
-  width: 40%;
-  font-size: medium;
-  font-family: "Fira Code", monospace;
-  margin-right: 10px;
-}
-
-.search-box {
-  /* padding: 2%; */
-  width: 80%;
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
 }
 
 h1 {
@@ -190,7 +231,7 @@ h1 {
 
 .weather-wrap {
   background-color: lavender;
-  width: 75%;
+  width: 60%;
   margin: 0px auto;
   margin-top: 15px;
   text-align: center;
@@ -260,7 +301,6 @@ h1 {
 }
 
 button {
-  margin-left: 15px;
   border-radius: 5px;
   border-style: none;
   display: flex;
@@ -268,6 +308,7 @@ button {
   justify-content: center;
   text-transform: uppercase;
   width: 125px;
+  height: 50px;
   color: white;
   background-color: #302244;
   cursor: pointer;
@@ -362,5 +403,40 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+/*****************/
+/* MEDIA QUERIES */
+/*****************/
+
+/* below 768px */
+@media screen and (max-width: 500px) {
+  .weather-wrap {
+    width: 75%;
+  }
+
+  .search-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cs-style {
+    margin-bottom: 15px;
+  }
+
+  .cs-parent {
+    flex-direction: column;
+  }
+
+  .select-style {
+    margin-bottom: 15px;
+    width: 200px;
+  }
+
+  h1 {
+    font-size: large;
+    margin-top: 20px;
+  }
 }
 </style>
