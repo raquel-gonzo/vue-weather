@@ -29,11 +29,6 @@
         />
       </span>
 
-      <!-- todo: 
-      - have default search be city and state.
-      - add breakpoint responsive styling 
-      -->
-
       <select v-model="selectData" class="select-style fade-in">
         <option disabled value="">Search by</option>
         <option value="City, State">City, State</option>
@@ -82,13 +77,17 @@
     <div v-if="errorFound" class="weather-wrap fade-in">
       Whoops... I couldn't find that place. Try checking your spelling.
     </div>
+
+    <the-footer />
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import TheFooter from "./components/TheFooter.vue";
 
 export default {
+  components: { TheFooter },
   name: "App",
   data() {
     return {
@@ -105,7 +104,6 @@ export default {
   },
   methods: {
     fetchWeather() {
-      // let isnum = /^\d{5}$/.test(this.query); // regexp for finding a 5-digit zip code
       let queryKind;
       if (this.selectData === "US zip Code" && this.queryZip !== "") {
         // if the user is searching for a US zip code
@@ -177,6 +175,22 @@ export default {
   align-items: center;
   align-content: center;
   font-family: "Fira Code", monospace;
+}
+
+a {
+  color: #302244;
+}
+
+#icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position:absolute;
+  bottom: 10px;
+}
+
+#icons p {
+  color: #302244;
 }
 
 .search-input {
